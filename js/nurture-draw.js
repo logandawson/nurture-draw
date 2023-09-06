@@ -8,6 +8,7 @@ const ctx = canvas[0].getContext('2d');
 const LINE_COLOR = '#eee';
 const LINE_WIDTH = 0.8;
 const MIN_LENGTH = 45;
+const RAND_MAX_LENGTH = 100;
 const RAND_BOX_PERCENT = 0.5;
 const RAND_INTERVAL_RANGE = { min: 200, max: 1000 };
 const RAND_DELAY_TIME = 3000;
@@ -104,6 +105,7 @@ const draw = () => {
 };
 
 const drawRand = () => {
+  // todo: limit the line length based on RAND_MAX_LENGTH constant
   let randX = getRandomInt(center.x - offset.x, center.x + offset.x),
     randY = getRandomInt(center.y - offset.y, center.y + offset.y);
 
