@@ -4,15 +4,19 @@ const canvas = document.getElementsByClassName('nurture-draw');
 /** @type {CanvasRenderingContext2D} */
 const ctx = canvas[0].getContext('2d');
 
+/** Settings */
 const LINE_COLOR = '#fff';
-const LINE_WIDTH = 0.4;
+const LINE_WIDTH = 0.6;
 const MIN_LENGTH = 20;
-const RAND_OFFSET = 300;
+const RAND_BOX_PERCENT = 0.45;
+const RAND_INTERVAL_RANGE = { min: 100, max: 1500 };
+const RAND_DELAY_TIME = 2000;
 
 let randTimer = null;
 let prevPos = { x: undefined, y: undefined };
-let mousePos = { x: undefined, y: undefined };
+let curPos = { x: undefined, y: undefined };
 let center = { x: undefined, y: undefined };
+let offset = { x: undefined, y: undefined };
 
 const calcDist = (x1, y1, x2, y2) => {
   let dx = x2 - x1,
@@ -25,54 +29,55 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
+const checkBounds = (value, max) => {
+  if (value > max) {
+    return max;
+  } else if (value < 0) {
+    return 0;
+  }
+  return value;
+};
+
 const draw = () => {
-  if (mousePos.x && mousePos.y) {
+  if (curPos.x && curPos.y) {
     if (!prevPos.x) {
-      prevPos = mousePos;
+      prevPos = curPos;
     }
 
-    let dist = calcDist(prevPos.x, prevPos.y, mousePos.x, mousePos.y);
+    let dist = calcDist(prevPos.x, prevPos.y, curPos.x, curPos.y);
 
     if (dist > MIN_LENGTH) {
       ctx.beginPath();
       ctx.moveTo(prevPos.x, prevPos.y);
-      ctx.lineTo(mousePos.x, mousePos.y);
+      ctx.lineTo(curPos.x, curPos.y);
       ctx.stroke();
 
-      prevPos = mousePos;
+      prevPos = curPos;
+
+      return true;
+    } else {
+      return false;
     }
   }
 };
 
 const drawRand = () => {
+  let randX = getRandomInt(center.x - offset.x, center.x + offset.x),
+    randY = getRandomInt(center.y - offset.y, center.y + offset.y);
+
   let rect = ctx.canvas.getBoundingClientRect();
+  randX = checkBounds(randX, rect.right);
+  randY = checkBounds(randY, rect.bottom);
 
-  if (rect) {
-    let randX = getRandomInt(
-        center.x - RAND_OFFSET,
-        center.x + RAND_OFFSET
-      ),
-      randY = getRandomInt(
-        center.y - RAND_OFFSET,
-        center.y + RAND_OFFSET
-      );
+  curPos = { x: randX, y: randY };
 
-    if (randX > rect.right) {
-      randX = rect.right;
-    } else if (randX < 0) {
-      randX = 0;
-    }
-
-    if (randY > rect.bottom) {
-      randY = rect.bottom;
-    } else if (randY < 0) {
-      randY = 0;
-    }
-
-    mousePos = { x: randX, y: randY };
-    draw();
-
-    randTimer.interval = getRandomInt(100, 1000);
+  if (draw()) {
+    randTimer.interval = getRandomInt(
+      RAND_INTERVAL_RANGE.min,
+      RAND_INTERVAL_RANGE.max
+    );
+  } else {
+    randTimer.interval = 0;
   }
 };
 
@@ -93,19 +98,27 @@ const init = () => {
 
   ctx.save();
 
-  randTimer = new Timer(drawRand, 5000);
+  let rect = ctx.canvas.getBoundingClientRect();
+  offset = {
+    x: (rect.right * RAND_BOX_PERCENT) / 2,
+    y: (rect.bottom * RAND_BOX_PERCENT) / 2,
+  };
+
+  randTimer = new Timer(drawRand, RAND_DELAY_TIME);
   randTimer.start();
 };
 
 window.addEventListener('mousemove', (e) => {
-  randTimer.interval = 5000;
+  randTimer.interval = RAND_DELAY_TIME;
   randTimer.reset();
 
   let rect = ctx.canvas.getBoundingClientRect();
-  mousePos = {
+
+  curPos = {
     x: e.clientX - ((rect && rect.left) || 0),
     y: e.clientY - ((rect && rect.top) || 0),
   };
+
   draw();
 });
 
