@@ -10,7 +10,7 @@ const LINE_WIDTH = 0.8;
 const MIN_LENGTH = 45;
 const RAND_BOX_PERCENT = 0.5;
 const RAND_INTERVAL_RANGE = { min: 200, max: 1000 };
-const RAND_DELAY_TIME = 2500;
+const RAND_DELAY_TIME = 3000;
 
 let randTimer = null;
 let prevPos = { x: undefined, y: undefined };
@@ -149,17 +149,25 @@ window.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('pointermove', (e) => {
-  randTimer.interval = RAND_DELAY_TIME;
-  randTimer.reset();
+  if (e.isPrimary) {
+    randTimer.interval = RAND_DELAY_TIME;
+    randTimer.reset();
 
-  let rect = ctx.canvas.getBoundingClientRect();
+    let rect = ctx.canvas.getBoundingClientRect();
 
-  curPos = {
-    x: e.clientX - ((rect && rect.left) || 0),
-    y: e.clientY - ((rect && rect.top) || 0),
-  };
+    curPos = {
+      x: e.clientX - ((rect && rect.left) || 0),
+      y: e.clientY - ((rect && rect.top) || 0),
+    };
 
-  draw();
+    draw();
+  }
 });
+
+// window.addEventListener('touchstart', () => {
+//   let el = document.documentElement,
+//     rfs = el.requestFullscreen;
+//   rfs.call(el);
+// });
 
 window.addEventListener('load', init);
