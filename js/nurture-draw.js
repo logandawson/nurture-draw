@@ -9,7 +9,7 @@ const LINE_COLOR = '#eee';
 const LINE_WIDTH = 0.8;
 const MIN_LENGTH = 50;
 const RAND_BOX_PERCENT = 0.5;
-const RAND_INTERVAL_RANGE = { min: 100, max: 1500 };
+const RAND_INTERVAL_RANGE = { min: 500, max: 2000 };
 const RAND_DELAY_TIME = 2000;
 
 let randTimer = null;
@@ -94,7 +94,7 @@ const init = () => {
   ctx.strokeStyle = LINE_COLOR;
 
   ctx.lineWidth = LINE_WIDTH;
-  ctx.lineCap = 'round';
+  ctx.lineCap = 'butt';
 
   ctx.save();
 
@@ -114,7 +114,7 @@ document.getElementById('clear').addEventListener('click', (e) => {
   randTimer.reset();
 });
 
-window.addEventListener('mousemove', (e) => {
+window.addEventListener('pointermove', (e) => {
   randTimer.interval = RAND_DELAY_TIME;
   randTimer.reset();
 
