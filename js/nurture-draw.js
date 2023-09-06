@@ -7,10 +7,10 @@ const ctx = canvas[0].getContext('2d');
 /** Settings */
 const LINE_COLOR = '#eee';
 const LINE_WIDTH = 0.8;
-const MIN_LENGTH = 50;
+const MIN_LENGTH = 45;
 const RAND_BOX_PERCENT = 0.5;
-const RAND_INTERVAL_RANGE = { min: 500, max: 2000 };
-const RAND_DELAY_TIME = 2000;
+const RAND_INTERVAL_RANGE = { min: 200, max: 1000 };
+const RAND_DELAY_TIME = 2500;
 
 let randTimer = null;
 let prevPos = { x: undefined, y: undefined };
@@ -40,8 +40,10 @@ const checkBounds = (value, max) => {
 
 const resetCanvas = () => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  randTimer.interval = RAND_DELAY_TIME;
-  randTimer.reset();
+  if (randTimer) {
+    randTimer.interval = RAND_DELAY_TIME;
+    randTimer.reset();
+  }
 };
 
 const fitCanvas = (ctx) => {
@@ -130,7 +132,6 @@ const init = () => {
   randTimer = new Timer(drawRand, RAND_DELAY_TIME);
   randTimer.start();
 
-  // todo: resize not working
   window.addEventListener('resize', () => {
     fitCanvas(ctx);
     setCanvasStyle(ctx);
