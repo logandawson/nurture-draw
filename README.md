@@ -4,7 +4,7 @@ Copycat of Porter Robinson's line drawing tool made for the Nurture album.
 
 ## Demo
 
-[Click here](logandawson.github.io/nurture-draw/)
+[Click here](https://logandawson.github.io/nurture-draw/)
 
 ## Authors
 
