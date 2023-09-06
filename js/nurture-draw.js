@@ -5,10 +5,10 @@ const canvas = document.getElementsByClassName('nurture-draw');
 const ctx = canvas[0].getContext('2d');
 
 /** Settings */
-const LINE_COLOR = '#fff';
-const LINE_WIDTH = 0.6;
-const MIN_LENGTH = 20;
-const RAND_BOX_PERCENT = 0.45;
+const LINE_COLOR = '#eee';
+const LINE_WIDTH = 0.8;
+const MIN_LENGTH = 50;
+const RAND_BOX_PERCENT = 0.5;
 const RAND_INTERVAL_RANGE = { min: 100, max: 1500 };
 const RAND_DELAY_TIME = 2000;
 
@@ -107,6 +107,12 @@ const init = () => {
   randTimer = new Timer(drawRand, RAND_DELAY_TIME);
   randTimer.start();
 };
+
+document.getElementById('clear').addEventListener('click', (e) => {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  randTimer.interval = RAND_DELAY_TIME;
+  randTimer.reset();
+});
 
 window.addEventListener('mousemove', (e) => {
   randTimer.interval = RAND_DELAY_TIME;
