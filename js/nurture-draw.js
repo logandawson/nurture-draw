@@ -38,6 +38,46 @@ const checkBounds = (value, max) => {
   return value;
 };
 
+const resetCanvas = () => {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  randTimer.interval = RAND_DELAY_TIME;
+  randTimer.reset();
+};
+
+const fitCanvas = (ctx) => {
+  let canvas = ctx.canvas;
+  const cw = window.innerWidth;
+  const ch = window.innerHeight;
+
+  const needResize = canvas.width !== cw || canvas.height !== ch;
+
+  if (needResize) {
+    canvas.width = cw;
+    canvas.height = ch;
+  }
+
+  ctx.clearRect(0, 0, cw, ch);
+
+  center = {
+    x: Math.floor(cw / 2),
+    y: Math.floor(ch / 2),
+  };
+
+  let rect = ctx.canvas.getBoundingClientRect();
+  offset = {
+    x: (rect.right * RAND_BOX_PERCENT) / 2,
+    y: (rect.bottom * RAND_BOX_PERCENT) / 2,
+  };
+};
+
+const setCanvasStyle = (ctx) => {
+  ctx.fillStyle = LINE_COLOR;
+  ctx.strokeStyle = LINE_COLOR;
+
+  ctx.lineWidth = LINE_WIDTH;
+  ctx.lineCap = 'butt';
+};
+
 const draw = () => {
   if (curPos.x && curPos.y) {
     if (!prevPos.x) {
@@ -82,36 +122,29 @@ const drawRand = () => {
 };
 
 const init = () => {
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
-
-  center = {
-    x: Math.floor(ctx.canvas.width / 2),
-    y: Math.floor(ctx.canvas.height / 2),
-  };
-
-  ctx.fillStyle = LINE_COLOR;
-  ctx.strokeStyle = LINE_COLOR;
-
-  ctx.lineWidth = LINE_WIDTH;
-  ctx.lineCap = 'butt';
+  fitCanvas(ctx);
+  setCanvasStyle(ctx);
 
   ctx.save();
 
-  let rect = ctx.canvas.getBoundingClientRect();
-  offset = {
-    x: (rect.right * RAND_BOX_PERCENT) / 2,
-    y: (rect.bottom * RAND_BOX_PERCENT) / 2,
-  };
-
   randTimer = new Timer(drawRand, RAND_DELAY_TIME);
   randTimer.start();
+
+  // todo: resize not working
+  window.addEventListener('resize', () => {
+    fitCanvas(ctx);
+    setCanvasStyle(ctx);
+  });
 };
 
-document.getElementById('clear').addEventListener('click', (e) => {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  randTimer.interval = RAND_DELAY_TIME;
-  randTimer.reset();
+document
+  .getElementById('clear')
+  .addEventListener('click', resetCanvas);
+
+window.addEventListener('keydown', (e) => {
+  if (e.key == ' ' || e.key == 'Spacebar' || e.key == 'Escape') {
+    resetCanvas();
+  }
 });
 
 window.addEventListener('pointermove', (e) => {
