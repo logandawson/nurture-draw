@@ -12,4 +12,4 @@ Logan Dawson
 
 ## Acknowledgments
 
-[Porter Robinson](https://nurtu.re/)
+[Porter Robinson](https://nurture.art/)
